@@ -79,13 +79,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)/externals/GLEW/include/GL;$(ProjectDir)/externals/SDL2_ttf/include;$(ProjectDir)/externals/SDL2_image/include;$(ProjectDir)/externals/SDL2/include;$(ProjectDir)/externals/glm;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)/externals/SDL2_ttf/lib/x64;$(ProjectDir)/externals/SDL2_image/lib/x64;$(ProjectDir)/externals/SDL2/lib/x64;$(ProjectDir)/externals/GLEW/lib/release/x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)/externals/GLEW/include/GL;$(ProjectDir)/externals/SDL2_ttf/include;$(ProjectDir)/externals/SDL2_image/include;$(ProjectDir)/externals/SDL2/include;$(ProjectDir)/externals/Assimp/include/assimp;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)/externals/SDL2_ttf/lib/x64;$(ProjectDir)/externals/SDL2_image/lib/x64;$(ProjectDir)/externals/SDL2/lib/x64;$(ProjectDir)/externals/GLEW/lib/release/x64;$(ProjectDir)/externals/Assimp/lib/x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir)/externals/GLEW/include/GL;$(ProjectDir)/externals/SDL2_ttf/include;$(ProjectDir)/externals/SDL2_image/include;$(ProjectDir)/externals/SDL2/include;$(ProjectDir)/externals/glm;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)/externals/SDL2_ttf/lib/x64;$(ProjectDir)/externals/SDL2_image/lib/x64;$(ProjectDir)/externals/SDL2/lib/x64;$(ProjectDir)/externals/GLEW/lib/release/x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)/externals/GLEW/include/GL;$(ProjectDir)/externals/SDL2_ttf/include;$(ProjectDir)/externals/SDL2_image/include;$(ProjectDir)/externals/SDL2/include;$(ProjectDir)/externals/Assimp/include/assimp;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)/externals/SDL2_ttf/lib/x64;$(ProjectDir)/externals/SDL2_image/lib/x64;$(ProjectDir)/externals/SDL2/lib/x64;$(ProjectDir)/externals/GLEW/lib/release/x64;$(ProjectDir)/externals/Assimp/lib/x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -125,7 +125,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;SDL2.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;SDL2.lib;SDL2_image.lib;SDL2_ttf.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,17 +142,15 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;SDL2.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;SDL2.lib;SDL2_image.lib;SDL2_ttf.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GameEngine.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="TriangleRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameEngine.h" />
-    <ClInclude Include="TriangleRenderer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
