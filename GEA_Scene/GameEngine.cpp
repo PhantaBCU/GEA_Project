@@ -71,6 +71,11 @@ namespace GE {
 				std::cerr << "Unable to set Vsync! SDL error: " << SDL_GetError() << std::endl;
 			}
 		}
+
+		triangle = new TriangleRenderer();
+
+		triangle->init();
+
 		// Got this far then must have been successful setting up SDL and OpenGL
 		return true;
 	}
@@ -95,44 +100,27 @@ namespace GE {
 	}
 
 	// Update method which updates the game logic
-	// Does nothing for this example
+
 	void GameEngine::update() {
 	
 
 	}
 
 	// Draw method.  Will modify this to render more complex scenes
-	// For now clears the background
+
 	void GameEngine::draw() {
 		glClearColor(0.392f, 0.584f, 0.929f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-
-
-		// Draw a primitive (triangle) using immediate mode OpenGL
-		// immediate mode involves sending graphics commands to OpenGL
-		// to render.  Easy to use but not very efficient because
-		// OpenGL is getting commands on an ad-hoc basis.  Makes it
-		// difficult for OpenGL to optimise rendering because doesn't
-		// know what's coming next.  Immediate mode is not to be used
-		// for the assignment
-		glBegin(GL_TRIANGLES);
-			glColor3f(1.0f, 0.0f, 0.0f);
-			glVertex2f(-1.0f, 0.0f);
-			glColor3f(0.0f, 1.0f, 0.0f);
-			glVertex2f(1.0f, 0.0f);
-			glColor3f(0.0f, 0.0f, 1.0f);
-			glVertex2f(0.0f, 1.0f);
-		glEnd();
-
-
-
+		triangle->draw();
 		SDL_GL_SwapWindow(window);
-
 	}
 
 	// Shutdown method closes OpenGL and SDL down
 	// Will need to modify when we create additional objects
 	void GameEngine::shutdown() {
+
+		triangle->destroy();
+
 		SDL_DestroyWindow(window);
 
 		window = nullptr;

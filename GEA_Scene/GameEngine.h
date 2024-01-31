@@ -3,15 +3,16 @@
 #include <glew.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
+#include "TriangleRenderer.h"
 
 namespace GE {
 
 	// Basic Game Engine class
 	class GameEngine {
 	public:
-		GameEngine();			// Constructor
+		GameEngine();						// Constructor
 
-		virtual ~GameEngine();	// Destructor
+		virtual ~GameEngine();				// Destructor
 
 		bool init(bool vSyncEnabled);		// Object initialisation
 		bool keep_running();				// Indicates if user has closed window and, hence, game
@@ -30,6 +31,8 @@ namespace GE {
 
 		// SDL Gl context to represent OpenGL in the program
 		SDL_GLContext glContext = nullptr;
+
+		TriangleRenderer* triangle;
 	};
 
 	// Helper function
