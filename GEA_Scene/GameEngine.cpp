@@ -7,8 +7,8 @@ namespace GE {
 
 	}
 
-	GameEngine::~GameEngine()
-	{
+	GameEngine::~GameEngine() {
+
 	}
 
 	bool GameEngine::init(bool vSyncEnabled) {
@@ -28,7 +28,7 @@ namespace GE {
 
 		// Create the window and frame features
 		// In this case window has a fixed size and prepares window for OpenGL to render into
-		window = SDL_CreateWindow("SDL OpenGL", 50, 50, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+		window = SDL_CreateWindow("SDL OpenGL", 0, 0, windowWidth, windowHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 
 		// Check window was created
 		if (window == nullptr) {
@@ -72,9 +72,22 @@ namespace GE {
 			}
 		}
 
+
+		mainCam = new Camera(
+			glm::vec3(0.0f, 0.0f, 5.0f), // Camera Position
+			glm::vec3(0.0f, 0.0f, 0.0f), // Camera Target
+			glm::vec3(0.0f, 1.0f, 0.0f), // Up direction
+			90.0f, (windowWidth / windowHeight), 0.1f, 100.0f //FOV+Ar+Np+Fp
+		);
+
 		triangle = new TriangleRenderer();
 
 		triangle->init();
+
+		//Set Position, Rotation and Scale
+		triangle->setVec3(1, glm::vec3(0.0f, 0.0f, 0.0f));
+		triangle->setVec3(2, glm::vec3(0.0f, 0.0f, 0.0f));
+		triangle->setVec3(3, glm::vec3(1.0f, 1.0f, 1.0f));
 
 		// Got this far then must have been successful setting up SDL and OpenGL
 		return true;
@@ -103,6 +116,7 @@ namespace GE {
 
 	void GameEngine::update() {
 	
+		triangle->setRotX(triangle->getRotX() + 0.4);
 
 	}
 
@@ -111,7 +125,7 @@ namespace GE {
 	void GameEngine::draw() {
 		glClearColor(0.392f, 0.584f, 0.929f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		triangle->draw();
+		triangle->draw(mainCam);
 		SDL_GL_SwapWindow(window);
 	}
 

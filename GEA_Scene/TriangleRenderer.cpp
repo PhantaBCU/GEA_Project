@@ -1,15 +1,22 @@
 #include "TriangleRenderer.h"
 #include <iostream>
+#include "gtc/type_ptr.hpp"
 
 namespace GE {
 	
 	GLfloat vertexData[] = {
-		-1.0f, 0.0f,
-		1.0f, 0.0f,
-		0.0f, 1.0f
+		-1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f,
+		0.0f, 1.0f, 1.0f
 	};
 	
-	TriangleRenderer::TriangleRenderer() {}
+	TriangleRenderer::TriangleRenderer() {
+		pos.x = pos.y = pos.z = 0.0f;
+		rot.x = rot.y = rot.z = 0.0f;
+		scl.x = scl.y = scl.z = 1.0f;
+		programId = transformUniformId = viewUniformId = projectionUniformId = vboTriangle = 0;
+		vertexPos3DLocation = 0;
+	}
 	
 	TriangleRenderer::~TriangleRenderer() {}
 	
@@ -30,9 +37,12 @@ namespace GE {
 		GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 		const GLchar* V_ShaderCode[] = {
 			"#version 140\n"
-			"in vec2 vertexPos2D;\n"
+			"in vec3 vertexPos3D;\n"
+			"uniform mat4 viewMat;\n"
+			"uniform mat4 projMat;\n"
+			"uniform mat4 transformMat;\n"
 			"void main() {\n"
-			"gl_Position = vec4(vertexPos2D.x, vertexPos2D.y, 0, 1);\n"
+			"gl_Position = projMat * viewMat * transformMat * vec4(vertexPos3D.x, vertexPos3D.y, vertexPos3D.z, 1);\n"
 			"}\n" 
 		};
 
@@ -83,11 +93,15 @@ namespace GE {
 			std::cerr << "Failed to link program!" << std::endl;
 		}
 
-		vertexPos2DLocation = glGetAttribLocation(programId, "vertexPos2D");
+		vertexPos3DLocation = glGetAttribLocation(programId, "vertexPos3D");
 
-		if (vertexPos2DLocation == -1) {
-			std::cerr << "Problem getting vertexPos2D" << std::endl;
+		if (vertexPos3DLocation == -1) {
+			std::cerr << "Problem getting vertexPos3D" << std::endl;
 		}
+
+		viewUniformId = glGetUniformLocation(programId, "viewMat");
+		projectionUniformId = glGetUniformLocation(programId, "projMat");
+		transformUniformId = glGetUniformLocation(programId, "transformMat");
 		
 		glGenBuffers(1, &vboTriangle);
 		glBindBuffer(GL_ARRAY_BUFFER, vboTriangle);
@@ -102,14 +116,31 @@ namespace GE {
 
 	}
 
-	void TriangleRenderer::draw()
+	void TriangleRenderer::draw(Camera* cam)
 	{
+
+		glm::mat4 transformationMat = glm::mat4(1.0f);
+
+		transformationMat = glm::translate(transformationMat, pos);
+		transformationMat = glm::rotate(transformationMat, glm::radians(rot.x), xAxis);
+		transformationMat = glm::rotate(transformationMat, glm::radians(rot.y), yAxis);
+		transformationMat = glm::rotate(transformationMat, glm::radians(rot.z), zAxis);
+		transformationMat = glm::scale(transformationMat, scl);
+
+		glm::mat4 viewMat = cam->getViewMatrix();
+		glm::mat4 projectionMat = cam->getProjectionMatrix();
+
 		glUseProgram(programId);
+
+		glUniformMatrix4fv(transformUniformId,	 1, GL_FALSE, glm::value_ptr(transformationMat));
+		glUniformMatrix4fv(viewUniformId,		 1, GL_FALSE, glm::value_ptr(viewMat));
+		glUniformMatrix4fv(projectionUniformId,	 1, GL_FALSE, glm::value_ptr(projectionMat));
+
 		glBindBuffer(GL_ARRAY_BUFFER, vboTriangle);
-		glEnableVertexAttribArray(vertexPos2DLocation);
-		glVertexAttribPointer(vertexPos2DLocation, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), nullptr);
+		glEnableVertexAttribArray(vertexPos3DLocation);
+		glVertexAttribPointer(vertexPos3DLocation, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
-		glDisableVertexAttribArray(vertexPos2DLocation);
+		glDisableVertexAttribArray(vertexPos3DLocation);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glUseProgram(0);
 	}

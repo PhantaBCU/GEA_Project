@@ -1,5 +1,7 @@
 ﻿  GameEngine.cpp
-  TriangleRenderer.cpp
+C:\Users\Henry\Documents\GitHub\GEA_Project\GEA_Scene\GameEngine.cpp(80,24): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Henry\Documents\GitHub\GEA_Project\GEA_Scene\GameEngine.cpp(119,41): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   main.cpp
+  TriangleRenderer.cpp
   Generating Code...
-  GEA_Scene.vcxproj -> C:\HenCut\GitHub - CMP5363 GEA\GEA_Project\x64\Debug\GEA_Scene.exe
+  GEA_Scene.vcxproj -> C:\Users\Henry\Documents\GitHub\GEA_Project\x64\Debug\GEA_Scene.exe
