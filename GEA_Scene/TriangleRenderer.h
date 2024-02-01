@@ -50,19 +50,13 @@ namespace GE {
 		void setVec3(int type, glm::vec3 vec) {
 			switch (type) {
 			case 1:
-				pos.x = vec.x;
-				pos.y = vec.y;
-				pos.z = vec.z;
+				pos = vec;
 				break;
 			case 2:
-				rot.x = vec.x;
-				rot.y = vec.y;
-				rot.z = vec.z;
+				rot = vec;
 				break;
 			case 3:
-				scl.x = vec.x;
-				scl.y = vec.y;
-				scl.z = vec.z;
+				scl = vec;
 				break;
 			}
 		}
@@ -70,9 +64,9 @@ namespace GE {
 	
 	private: 
 		GLuint programId, transformUniformId, viewUniformId, projectionUniformId, vboTriangle;
-		GLint vertexPos3DLocation;
+		GLint vertexPos3DLocation, vertexColourLocation;
 		glm::vec3 pos, rot, scl;
-		glm::vec3 xAxis= { 1.0f, 0.0f, 0.0f };
+		glm::vec3 xAxis = { 1.0f, 0.0f, 0.0f };
 		glm::vec3 yAxis = { 0.0f, 1.0f, 0.0f };
 		glm::vec3 zAxis = { 0.0f, 0.0f, 1.0f };
 	};

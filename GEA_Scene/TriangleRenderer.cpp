@@ -3,11 +3,28 @@
 #include "gtc/type_ptr.hpp"
 
 namespace GE {
-	
-	GLfloat vertexData[] = {
-		-1.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 1.0f
+	struct Vertex {
+		float x, y, z;
+		float r, g, b, a;
+		Vertex(float _x, float _y, float _z, float _r, float _g, float _b, float _a) {
+			x = _x;
+			y = _y;
+			z = _z;
+
+			r = _r;
+			g = _g;
+			b = _b;
+			a = _a;
+		}
+		Vertex() {
+			x = y = z = 0;
+			r = g = b = a = 0;
+		}
+	};
+	Vertex vertexData[] = {
+		Vertex(- 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f),
+		Vertex(1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f),
+		Vertex(0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f)
 	};
 	
 	TriangleRenderer::TriangleRenderer() {
@@ -38,11 +55,14 @@ namespace GE {
 		const GLchar* V_ShaderCode[] = {
 			"#version 140\n"
 			"in vec3 vertexPos3D;\n"
+			"in vec4 vColour;\n"
+			"out vec4 fColour;\n"
 			"uniform mat4 viewMat;\n"
 			"uniform mat4 projMat;\n"
 			"uniform mat4 transformMat;\n"
 			"void main() {\n"
 			"gl_Position = projMat * viewMat * transformMat * vec4(vertexPos3D.x, vertexPos3D.y, vertexPos3D.z, 1);\n"
+			"fColour = vColour;\n"
 			"}\n" 
 		};
 
@@ -59,9 +79,10 @@ namespace GE {
 		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 		const GLchar* F_ShaderCode[] = {
 			"#version 140\n"
+			"in vec4 fColour;\n"
 			"out vec4 fragmentColour;\n"
 			"void main() {\n"
-			"fragmentColour = vec4(1,0,0,1);\n"
+			"fragmentColour = fColour;\n"
 			"}\n"
 		};
 
@@ -72,11 +93,6 @@ namespace GE {
 		if (isShaderCompiledOK != GL_TRUE) {
 			std::cerr << "Error compiling fragment shader" << std::endl;
 			displayShaderCompilerError(fragmentShader);
-			return;
-		}
-		if (isShaderCompiledOK != GL_TRUE) {
-			std::cerr << "Error compiling vertex shader" << std::endl;
-			displayShaderCompilerError(vertexShader);
 			return;
 		}
 
@@ -99,14 +115,21 @@ namespace GE {
 			std::cerr << "Problem getting vertexPos3D" << std::endl;
 		}
 
+		vertexColourLocation = glGetAttribLocation(programId, "vColour");
+
+		if (vertexColourLocation == -1) {
+			std::cerr << "Problem getting vColour" << std::endl;
+		}
+
 		viewUniformId = glGetUniformLocation(programId, "viewMat");
 		projectionUniformId = glGetUniformLocation(programId, "projMat");
 		transformUniformId = glGetUniformLocation(programId, "transformMat");
 		
 		glGenBuffers(1, &vboTriangle);
+
 		glBindBuffer(GL_ARRAY_BUFFER, vboTriangle);
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
@@ -132,16 +155,40 @@ namespace GE {
 
 		glUseProgram(programId);
 
-		glUniformMatrix4fv(transformUniformId,	 1, GL_FALSE, glm::value_ptr(transformationMat));
-		glUniformMatrix4fv(viewUniformId,		 1, GL_FALSE, glm::value_ptr(viewMat));
-		glUniformMatrix4fv(projectionUniformId,	 1, GL_FALSE, glm::value_ptr(projectionMat));
+			glUniformMatrix4fv(transformUniformId,	 1, GL_FALSE, glm::value_ptr(transformationMat));
+			glUniformMatrix4fv(viewUniformId,		 1, GL_FALSE, glm::value_ptr(viewMat));
+			glUniformMatrix4fv(projectionUniformId,	 1, GL_FALSE, glm::value_ptr(projectionMat));
 
-		glBindBuffer(GL_ARRAY_BUFFER, vboTriangle);
-		glEnableVertexAttribArray(vertexPos3DLocation);
-		glVertexAttribPointer(vertexPos3DLocation, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		glDisableVertexAttribArray(vertexPos3DLocation);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			glBindBuffer(GL_ARRAY_BUFFER, vboTriangle);
+
+				glEnableVertexAttribArray(vertexPos3DLocation);
+				glVertexAttribPointer(vertexPos3DLocation, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, x));
+
+				glEnableVertexAttribArray(vertexColourLocation);
+				glVertexAttribPointer(vertexColourLocation, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, r));
+
+				glDrawArrays(GL_TRIANGLES, 0, sizeof(vertexData) / sizeof(Vertex));
+
+				glDisableVertexAttribArray(vertexPos3DLocation);
+				glDisableVertexAttribArray(vertexColourLocation);
+
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 		glUseProgram(0);
 	}
 
